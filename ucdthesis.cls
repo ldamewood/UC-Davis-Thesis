@@ -20,6 +20,7 @@
 \RequirePackage{multicol}
 \RequirePackage{caption}
 \RequirePackage{chapterbib}
+\RequirePackage{hyperref}
 \RequirePackage[round,comma]{natbib}
 %    ****************************************
 %    *         LANGUAGE DECLARATIONS        *

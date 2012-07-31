@@ -1,7 +1,6 @@
 \documentclass{ucdthesis}
 % Packages used
 \usepackage{xcolor} % include color
-\usepackage{hyperref} % include hyperlinks in pdf version
 \usepackage[all]{hypcap} % Fixes hyperref links at end of captions
 \usepackage{graphics} % Generic graphics package
 \usepackage{pgfplots} % Supprt plotting (also includes tikz)
@@ -74,7 +73,7 @@
   \listoffigures
   \listoftables
   \chapter{Acknowledgments}
-  \input{acknowledgments}
+  \include{acknowledgments}
 \end{frontmatter}
 \begin{mainmatter}
   \include{introduction}

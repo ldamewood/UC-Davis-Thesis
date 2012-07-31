@@ -16,10 +16,15 @@ http://ctan.tug.org/tex-archive/support/latexmk/
 
 You can typeset the example thesis by issuing:
 
-$ latexmk -pdf thesis.tex
+$ latexmk -pdf thesis-simple.tex
 
 Otherwise, you can use
 
-$ pdflatex thesis
+$ pdflatex thesis-simple
 
-Note: I use a lot of extra packages in my example that come standard on TeXlive. If you use some other TeX distribution, then you may have to do some editing. I will add a simple example in the future.
+An example is included that uses a lot of optional packages. It can be typeset by issuing
+
+$ latexmk -pdf thesis.tex
+$ latexmk -pdf -jobname=abstract-standalone thesis.tex
+
+This creates thesis.pdf and abstract-standalone.pdf.
