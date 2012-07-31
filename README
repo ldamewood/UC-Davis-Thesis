@@ -1,0 +1,21 @@
+Thesis template class
+
+Files: 
+README        - this file
+ucdthesis.cls - the main class file
+ucdthesis.bst - natbib compatible bibliography style
+thesis.tex    - example thesis
+all.bib       - example bibliography
+*.tex         - included in thesis.tex
+
+Usage:
+I would recommend using ``latexmk'' to typeset the thesis. You can obtain it here:
+http://ctan.tug.org/tex-archive/support/latexmk/
+
+You can typeset the example thesis by issuing:
+$ latexmk -pdf thesis.tex
+
+Otherwise, you can use
+$ pdflatex thesis
+
+Note: I use a lot of extra packages that come standard on TeXlive. If you use some other TeX distribution, then you may have to do some editing.

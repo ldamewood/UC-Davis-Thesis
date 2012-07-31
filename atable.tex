@@ -1,0 +1,30 @@
+% A complicated table
+\begingroup
+\begin{table}[p!]
+\begin{center}
+\begin{tabular}{l|lc}
+\hline
+\hline
+Material & Method                            & \multicolumn{1}{c}{Gap (eV)} \\
+\hline
+         & PAW+GGA                           & 1.85 \\
+CrAs     & Fully insulating local field      & 1.92 \\
+         & Half transition metal local field & 1.96 \\
+         & Half simple metal local field     & 2.46 \\
+\hline
+         & PAW+GGA                           & 1.70 \\
+MnAs     & Fully insulating local field      & 2.07 \\
+         & Half transition metal local field & 2.21 \\
+\hline
+         & PAW+GGA                           & 1.55 \\
+MnC      & Fully insulating local field      & 2.07 \\
+         & Half transition metal local field & 2.22 \\
+\hline
+\hline
+\end{tabular}\end{center}
+\caption{%
+  \label{tbl:atable}%
+  An interesting table.
+}
+\end{table}
+\endgroup
