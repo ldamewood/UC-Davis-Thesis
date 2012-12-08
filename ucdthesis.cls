@@ -1,6 +1,6 @@
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{ucthesis}[2010/05/25 University of California Davis Thesis Class]
-\LoadClass[12pt,oneside]{book}
+\ProvidesClass{ucdthesis}[2010/05/25 University of California Davis Thesis Class]
+\LoadClass[12pt,twoside]{book}
 %\renewcommand\normalsize{\fontsize{10pt}{12pt}\selectfont}
 %\renewcommand\@ptsize{}
 %\renewcommand\@currsize{}
