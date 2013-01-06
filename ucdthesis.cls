@@ -1,17 +1,19 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{ucdthesis}[2010/05/25 University of California Davis Thesis Class]
-\LoadClass[12pt,twoside]{book}
-%\renewcommand\normalsize{\fontsize{10pt}{12pt}\selectfont}
-%\renewcommand\@ptsize{}
-%\renewcommand\@currsize{}
+\newif\if@copyright
 %    ****************************************
 %    *               OPTIONS                *
 %    ****************************************
-%\DeclareOption{10pt}{\renewcommand\@ptsize{0}}
-%\DeclareOption{11pt}{\renewcommand\@ptsize{1}}
-%\DeclareOption{12pt}{\renewcommand\@ptsize{2}}
-%\ExecuteOptions{12pt}
-%\ProcessOptions
+\DeclareOption{10pt}{\PassOptionsToClass{10pt}{book}}
+\DeclareOption{11pt}{\PassOptionsToClass{11pt}{book}}
+\DeclareOption{12pt}{\PassOptionsToClass{12pt}{book}}
+\DeclareOption{draft}{\PassOptionsToClass{draft}{book}}
+\DeclareOption{final}{\PassOptionsToClass{final}{book}}
+\DeclareOption{oneside}{\PassOptionsToClass{oneside}{book}}
+\DeclareOption{twoside}{\PassOptionsToClass{twoside}{book}}
+\DeclareOption{copyright}{\@copyrighttrue}
+\ProcessOptions\relax
+\LoadClass[12pt,letterpaper,oneside]{book}
 %    ****************************************
 %    *              PACKAGES                *
 %    ****************************************
@@ -47,14 +49,15 @@
 %    ****************************************
 \setlength\hoffset{0in}
 \setlength\voffset{0in}
-\setlength\oddsidemargin{0.5in}
+\setlength\oddsidemargin{0.0in}
+\setlength\evensidemargin{0.0in}
 \setlength\topmargin{-0.5in}
 \setlength\headheight{0.25in}
 \setlength\headsep{0.25in}
-\setlength\textwidth{6.0in}
+\setlength\textwidth{6.5in}
 \setlength\textheight{9.0in}
-\setlength\marginparsep{0pt}
-\setlength\marginparwidth{0in}
+\setlength\marginparsep{0.25in}
+\setlength\marginparwidth{0.5in}
 \setlength\footskip{0.5in}
 \let\scriptsize\normalsize
 \pagestyle{fancy}
@@ -69,13 +72,15 @@
 \newcommand\frontmatterpagenumbering{%
   \fancyhf{}
   \pagenumbering{roman}
-  \cfoot[-\roman{page}-]{-\roman{page}-}
+  \fancyfoot[CO,CE]{-\roman{page}-}
+% \cfoot[-\roman{page}-]{-\roman{page}-}
 }
 % Default page numbering
 \newcommand\defaultpagenumbering{%
   \fancyhf{}
   \pagenumbering{arabic}
-  \rhead[\arabic{page}]{\arabic{page}}
+%  \rhead[\arabic{page}]{\arabic{page}}
+  \fancyhead[RO,LE]{\arabic{page}}
 }
 %    ****************************************
 %    *           USER DECLARATIONS          *
@@ -124,10 +129,30 @@
 % The name of your UC Campus (e.g. Berkeley, Los Angeles)
 \def\campus#1{\gdef\@campus{\MakeUppercase{#1}}}
 %    ****************************************
+%    *               TWOSIDE                *
+%    ****************************************
+\def\cleardoublepage{
+  \clearpage
+  \if@twoside
+    \ifodd
+      \c@page
+    \else
+      \hbox{}
+      \vspace*{\fill}
+      \begin{center}
+        %This page intentionally contains only this sentence.
+      \end{center}
+      \vspace{\fill}
+      \thispagestyle{empty}
+      \newpage
+    \fi
+  \fi
+}
+%    ****************************************
 %    *             FRONT MATTER             *
 %    ****************************************
 \renewcommand\frontmatter{%
-  \clearpage
+  \cleardoublepage
   \@mainmatterfalse
   \frontmatterpagenumbering
 }
@@ -135,7 +160,7 @@
 %    *              TITLE PAGE              *
 %    ****************************************
 \def\maketitle{%
-  \clearpage
+  \cleardoublepage
   \begin{center}
     {\@title} \par
     By \par
@@ -164,25 +189,35 @@
     Committee in Charge \par
     {\@degreeyear}
   \end{center}
+  \if@copyright
+    \clearpage
+    \thispagestyle{empty}
+    \vspace*{\fill}
+    \begin{center}
+      Copyright by\\\MakeUppercase{\@author}\\\@degreeyear
+    \end{center}
+    \vspace*{\fill}
+  \fi
+  \cleardoublepage
 }
 %    ****************************************
 %    *            COPYRIGHT PAGE            *
 %    ****************************************
 \def\makecopyright{%
   \clearpage
-  \addtocounter{page}{-1}
   \thispagestyle{empty}
   \vspace*{\fill}
   \begin{center}
     Copyright by\\\MakeUppercase{\@author}\\\@degreeyear
   \end{center}
   \vspace*{\fill}
+  \cleardoublepage
 }
 %    ****************************************
 %    *            DEDICATION PAGE           *
 %    ****************************************
 \newenvironment{dedication}{%
-  \clearpage
+  \cleardoublepage
   \begin{center}
   \vspace*{\fill}
 }{%
@@ -218,7 +253,7 @@
 %    *            ABSTRACT PAGE             *
 %    ****************************************
 \def\abstract{
-  \clearpage%
+  \cleardoublepage %
   \phantomsection
   \addcontentsline{toc}{chapter}{\abstractname}
   \begin{singlespace}
@@ -235,7 +270,7 @@
 %    *              MAIN MATTER             *
 %    ****************************************
 \renewcommand\mainmatter{%
-  \clearpage
+  \cleardoublepage
   \@mainmattertrue
   \defaultpagenumbering
   \setcounter{page}{1}
@@ -243,8 +278,7 @@
 %    ****************************************
 %    *                CHAPTER               *
 %    ****************************************
-% Removed plain page layout
-\renewcommand\chapter{\if@openright\cleardoublepage\else\clearpage\fi
+\renewcommand\chapter{\cleardoublepage
                     \global\@topnum\z@
                     \@afterindentfalse
                     \secdef\@chapter\@schapter}
@@ -274,7 +308,7 @@
 %    *              BACK MATTER             *
 %    ****************************************
 \renewcommand\backmatter{%
-  \clearpage
+  \cleardoublepage
   \@mainmatterfalse
 }
 %    ****************************************
@@ -316,12 +350,6 @@
   \chapter{\indexname}
   \begin{multicols}{2}
     \let\item\@idxitem
-}{\end{multicols}\clearpage}
+}{\end{multicols}\cleardoublepage}
 \makeatother
-%    ****************************************
-%    *                TABLES                *
-%    ****************************************
-\newcommand\toprule{\hline\hline}%
-\newcommand\colrule{\\\hline}%
-\newcommand\botrule{\\\hline\hline}%
 \endinput
