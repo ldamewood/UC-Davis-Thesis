@@ -1,6 +1,9 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{ucdthesis}[2010/05/25 University of California Davis Thesis Class]
 \newif\if@copyright
+\@copyrightfalse
+\newif\if@thesis
+\@thesisfalse
 %    ****************************************
 %    *               OPTIONS                *
 %    ****************************************
@@ -12,6 +15,8 @@
 \DeclareOption{oneside}{\PassOptionsToClass{oneside}{book}}
 \DeclareOption{twoside}{\PassOptionsToClass{twoside}{book}}
 \DeclareOption{copyright}{\@copyrighttrue}
+\DeclareOption{thesis}{\@thesistrue}
+\DeclareOption{dissertation}{\@thesisfalse}
 \ProcessOptions\relax
 \LoadClass[12pt,letterpaper,oneside]{book}
 %    ****************************************
@@ -72,7 +77,11 @@
 \newcommand\frontmatterpagenumbering{%
   \fancyhf{}
   \pagenumbering{roman}
-  \fancyfoot[CO,CE]{-\roman{page}-}
+  \if@twoside
+    \fancyfoot[CO,CE]{-\roman{page}-}
+  \else
+    \fancyfoot[CO]{-\roman{page}-}
+  \fi
 % \cfoot[-\roman{page}-]{-\roman{page}-}
 }
 % Default page numbering
@@ -80,7 +89,11 @@
   \fancyhf{}
   \pagenumbering{arabic}
 %  \rhead[\arabic{page}]{\arabic{page}}
-  \fancyhead[RO,LE]{\arabic{page}}
+  \if@twoside
+    \fancyhead[RO,LE]{\arabic{page}}
+  \else
+    \fancyhead[RO]{\arabic{page}}
+  \fi
 }
 %    ****************************************
 %    *           USER DECLARATIONS          *
@@ -97,9 +110,6 @@
 \def\degreesemester#1{\gdef\@degreesemester{#1}}
 % The full (unabbreviated) name of the degree
 \def\degreename#1{\gdef\@degreename{\MakeUppercase{#1}}}
-% Is it a masters (thesis vs dissertation)
-\def\@isamasters{0}
-\def\isamasters{\gdef\@isamasters{1}}
 % Previous degrees (type, university, campus, year)
 \newcommand*{\@previousdegrees}{}
 \newcommand*{\previousdegree}[4]{%
@@ -168,7 +178,7 @@
       {\MakeUppercase{\@author}} \par
       {\@previousdegrees} \par
     \end{singlespace}
-    \ifnum \@isamasters = 1
+    \if@thesis
       THESIS \par
     \else
       DISSERTATION \par
