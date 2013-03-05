@@ -11,6 +11,7 @@
 \usepackage{braket} % Bra-ket commands used in physics
 \usepackage{cancel} % Cancel command used in math
 \usepackage{dcolumn} % decimal point alignment in tables
+\usepackage{natbib}
 \usepackage{ifthen} % Used to create standalone abstract
 \usepackage{lipsum} % Package to produce lipsum text. You may safely delete this line once you remove the \lipsum commands
 % you can run the command
@@ -72,25 +73,21 @@
   \tableofcontents
   \listoffigures
   \listoftables
-  \chapter{Acknowledgments}
-  \include{acknowledgments}
 \end{frontmatter}
 \begin{mainmatter}
   \include{introduction}
   %% Include extra chapters here.
-  \include{chapter1}
+  \include{body}
   \include{conclusion}
+  \appendix
+  \include{appendix1}
+  \include{appendix2}
 \end{mainmatter}
 \begin{backmatter}
   % Index (optional)
   \printindex
-  % CV (optional)
-  \include{cv}
-  % List of publications (optional)
-  \include{publications}
-  \appendix
-  \include{appendix1}
-  \include{appendix2}
+  \bibliographystyle{ucdthesis}
+  \bibliography{all}
 \end{backmatter}
 \end{document}
 }
