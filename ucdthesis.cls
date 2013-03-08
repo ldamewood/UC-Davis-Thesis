@@ -8,6 +8,8 @@
 \@editorfalse
 \newif\if@twoside
 \@twosidefalse
+\newif\if@mainmatter
+\providecommand\phantomsection{}
 %    ****************************************
 %    *               OPTIONS                *
 %    ****************************************
@@ -33,9 +35,6 @@
 %    *              PACKAGES                *
 %    ****************************************
 \RequirePackage{setspace}
-\RequirePackage{fancyhdr}
-\RequirePackage{multicol}
-\RequirePackage{hyperref}
 \if@editor%
   % Avoid editormode in externalized figures
   \ifx\tikzexternalrealjob\undefined%
@@ -43,10 +42,10 @@
     \RequirePackage{showkeys}%
     \def\SK@refcolor{\color{lightgray}}%
     \def\SK@labelcolor{\color{lightgray}}%
-    \RequirePackage[texcoord,noframe,grid,gridunit=in,gridcolor=lightgray,%
-      subgridcolor=lightgray!25%
+    \RequirePackage[texcoord,grid,gridunit=in,gridcolor=lightgray,%
+      subgridcolor=lightgray!25%,
+      %noframe,
     ]{showframe}%
-    \RequirePackage{showidx}%
     \if@twoside%
       \RequirePackage[mathlines,switch]{lineno}%
     \else%
@@ -74,6 +73,7 @@
        \patchBothAmsMathEnvironmentsForLineno{gather}%
        \patchBothAmsMathEnvironmentsForLineno{multline}%
       \fi
+      %\RequirePackage{showidx}%
     }
   \fi%
 \fi
@@ -112,36 +112,42 @@
 \setlength\marginparsep{0.0in}
 \setlength\marginparwidth{1.0in}
 \setlength\footskip{0.5in}
-\let\scriptsize\normalsize
-\pagestyle{fancy}
-\renewcommand{\headrulewidth}{0pt}
-\renewcommand{\footrulewidth}{0pt}
+%\let\scriptsize\normalsize
 \doublespacing
 %    ****************************************
 %    *              NUMBERING               *
 %    ****************************************
-% Front matter page numbering
-\newcommand\frontmatterpagenumbering{%
-  \fancyhf{}
-  \pagenumbering{roman}
-  \if@twoside
-    \fancyfoot[CO,CE]{-\roman{page}-}
-  \else
-    \fancyfoot[CO]{-\roman{page}-}
-  \fi
-% \cfoot[-\roman{page}-]{-\roman{page}-}
-}
-% Default page numbering
-\newcommand\defaultpagenumbering{%
-  \fancyhf{}
-  \pagenumbering{arabic}
-%  \rhead[\arabic{page}]{\arabic{page}}
-  \if@twoside
-    \fancyhead[RO,LE]{\arabic{page}}
-  \else
-    \fancyhead[RO]{\arabic{page}}
-  \fi
-}
+\def\ps@frontmatter{%
+  \def\@oddfoot{\hfil-\thepage-\hfil}
+  \let\@evenfoot\@oddfoot
+  \let\@oddhead\@empty
+  \let\@evenhead\@empty
+  \let\@mkboth\markboth
+  \def\chaptermark##1{%
+    \markright {\MakeUppercase{%
+      \ifnum \c@secnumdepth >\m@ne
+        \if@mainmatter
+          \@chapapp\ \thechapter. \ %
+        \fi
+      \fi
+      ##1}}}}
+\def\ps@mainmatter{%
+  \def\@oddfoot{\hfil\thepage\hfil}
+  \let\@evenfoot\@oddfoot
+  \let\@oddhead\@empty
+  \let\@evenhead\@empty
+  \let\@mkboth\markboth
+  \def\chaptermark##1{%
+    \markright {\MakeUppercase{%
+      \ifnum \c@secnumdepth >\m@ne
+        \if@mainmatter
+          \@chapapp\ \thechapter. \ %
+        \fi
+      \fi
+      ##1}}}}
+\let\ps@backmatter\ps@mainmatter
+%\let\ps@plain\ps@frontmatter
+\pagestyle{frontmatter}
 %    ****************************************
 %    *           USER DECLARATIONS          *
 %    ****************************************
@@ -204,22 +210,17 @@
   \fi
 }
 %    ****************************************
-%    *             FRONT MATTER             *
-%    ****************************************
-\renewcommand\frontmatter{%
-  \cleardoublepage
-  \@mainmatterfalse
-  \frontmatterpagenumbering
-}
-%    ****************************************
 %    *              TITLE PAGE              *
 %    ****************************************
 \def\maketitle{%
-  \hypersetup{
-    pdftitle={\@title},
-    pdfauthor={\@author},
-    pdfsubject={\@field},
-  }
+  \ifx\hyper@@anchor\undefined%
+  \else%
+    \hypersetup{
+      pdftitle={\@title},
+      pdfauthor={\@author},
+      pdfsubject={\@field},
+    }
+  \fi%
   \cleardoublepage
   \begin{center}
     \par{\@title}
@@ -254,23 +255,12 @@
     \thispagestyle{empty}
     \vspace*{\fill}
     \begin{center}
-      Copyright by\\\MakeUppercase{\@author}\\\@degreeyear
+      \par{Copyright by}
+      \par{\MakeUppercase{\@author}}
+      \par{\@degreeyear}
     \end{center}
     \vspace*{\fill}
   \fi
-  \cleardoublepage
-}
-%    ****************************************
-%    *            COPYRIGHT PAGE            *
-%    ****************************************
-\def\makecopyright{%
-  \clearpage
-  \thispagestyle{empty}
-  \vspace*{\fill}
-  \begin{center}
-    Copyright by\\\MakeUppercase{\@author}\\\@degreeyear
-  \end{center}
-  \vspace*{\fill}
   \cleardoublepage
 }
 %    ****************************************
@@ -287,33 +277,46 @@
 %    ****************************************
 %    *           CONTENTS PAGE              *
 %    ****************************************
-\renewcommand\tableofcontents{%
-    \chapter*{\contentsname}%
-    \@starttoc{toc}
-    }
+\def\tableofcontents{%
+  \chapter*{\contentsname}%
+  \@starttoc{toc}%
+}
 %    ****************************************
 %    *            FIGURES PAGE              *
 %    ****************************************
 \renewcommand\listoffigures{%
-  \chapter{\listfigurename}%
-  \@mkboth{\MakeUppercase\listfigurename}%
-          {\MakeUppercase\listfigurename}%
-          \@starttoc{lof}%
-}
+    \if@twocolumn
+      \@restonecoltrue\onecolumn
+    \else
+      \@restonecolfalse
+    \fi
+    \chapter{\listfigurename}%
+      \@mkboth{\MakeUppercase\listfigurename}%
+              {\MakeUppercase\listfigurename}%
+    \@starttoc{lof}%
+    \if@restonecol\twocolumn\fi
+    }
 %    ****************************************
 %    *             TABLES PAGE              *
 %    ****************************************
 \renewcommand\listoftables{%
-  \chapter{\listtablename}%
-  \@mkboth{\MakeUppercase\listtablename}%
-          {\MakeUppercase\listtablename}%
-          \@starttoc{lot}%
-}
+    \if@twocolumn
+      \@restonecoltrue\onecolumn
+    \else
+      \@restonecolfalse
+    \fi
+    \chapter{\listtablename}%
+      \@mkboth{%
+          \MakeUppercase\listtablename}%
+         {\MakeUppercase\listtablename}%
+    \@starttoc{lot}%
+    \if@restonecol\twocolumn\fi
+    }
 %    ****************************************
 %    *            ABSTRACT PAGE             *
 %    ****************************************
 \def\abstract{
-  \cleardoublepage %
+  \cleardoublepage
   \phantomsection
   \addcontentsline{toc}{chapter}{\abstractname}
   \begin{singlespace}
@@ -327,23 +330,41 @@
   \end{center}
 }
 %    ****************************************
-%    *              MAIN MATTER             *
+%    *              BACK MATTER             *
 %    ****************************************
+\renewcommand\frontmatter{%
+  \cleardoublepage
+  \@mainmatterfalse
+  \pagenumbering{roman}
+  \pagestyle{frontmatter}
+}
 \renewcommand\mainmatter{%
   \cleardoublepage
   \@mainmattertrue
-  \defaultpagenumbering
+  \pagenumbering{arabic}
   \setcounter{page}{1}
+  \pagestyle{mainmatter}
+}
+\renewcommand\backmatter{%
+  \if@openright
+    \cleardoublepage
+  \else
+    \clearpage
+  \fi
+  \@mainmatterfalse
+  \pagestyle{backmatter}
 }
 %    ****************************************
 %    *                CHAPTER               *
 %    ****************************************
-\renewcommand\chapter{\cleardoublepage
-                    \global\@topnum\z@
-                    \@afterindentfalse
-                    \secdef\@chapter\@schapter}
+\renewcommand\chapter{
+  \if@openright\cleardoublepage\else\clearpage\fi
+  \global\@topnum\z@
+  \@afterindentfalse
+  \secdef\@chapter\@schapter
+}
 \def\@makechapterhead#1{%
-  \vspace*{1em}
+  \vspace*{0 \p@}%
   {\parindent \z@ \raggedright \normalfont
     \ifnum \c@secnumdepth >\m@ne
       \if@mainmatter
@@ -357,7 +378,7 @@
     \vskip 40\p@
   }}
 \def\@makeschapterhead#1{%
-  \vspace*{1em}
+  \vspace*{0 \p@}%
   {\parindent \z@ \raggedright
     \normalfont
     \interlinepenalty\@M
@@ -365,47 +386,53 @@
     \vskip 40\p@
   }}
 %    ****************************************
-%    *              BACK MATTER             *
-%    ****************************************
-\renewcommand\backmatter{%
-  \cleardoublepage
-  \@mainmatterfalse
-}
-%    ****************************************
 %    *           THE BIBLIOGRAPHY           *
 %    ****************************************
-\renewenvironment{thebibliography}[1]
-     {\chapter{\bibname}% <-- this line was changed from \chapter* to \section*
-      \@mkboth{\MakeUppercase\bibname}{\MakeUppercase\bibname}%
-      \list{\@biblabel{\@arabic\c@enumiv}}%
-           {\settowidth\labelwidth{\@biblabel{#1}}%
-            \leftmargin\labelwidth
-            %\advance\leftmargin\labelsep
-            \@openbib@code
-            \usecounter{enumiv}%
-            \let\p@enumiv\@empty
-            \renewcommand\theenumiv{\@arabic\c@enumiv}}%
-      \sloppy
-      \clubpenalty4000
-      \@clubpenalty \clubpenalty
-      \widowpenalty4000%
-      \sfcode`\.\@m}
-     {\def\@noitemerr
-       {\@latex@warning{Empty 'thebibliography' environment}}%
-      \endlist}
-\newcommand\citetextlink[2]{\NAT@open#1\NAT@close}
+  %\@ifpackageloaded{natbib}{}{% natbib not loaded
+  \AtBeginDocument{
+    \renewenvironment{thebibliography}[1]{%
+      \chapter{\bibname}
+      \begin{thebibitemlist}{#1}}{\end{thebibitemlist}}
+      }
+      %}
+ \newenvironment{thebibitemlist}[1]{
+    \list{\@biblabel{\@arabic\c@enumiv}}%
+         {\settowidth\labelwidth{\@biblabel{#1}}%
+          \leftmargin\labelwidth
+          \advance\leftmargin\labelsep
+          \@openbib@code
+          \usecounter{enumiv}%
+          \let\p@enumiv\@empty
+          \renewcommand\theenumiv{\@arabic\c@enumiv}}%
+    \sloppy
+    \clubpenalty4000
+    \@clubpenalty \clubpenalty
+    \widowpenalty4000%
+    \sfcode`\.\@m}
+   {\def\@noitemerr
+     {\@latex@warning{Empty 'thebibliography' environment}}%
+     \endlist}
 %    ****************************************
 %    *               THE INDEX              *
 %    ****************************************
-\renewenvironment{theindex}{
-  %\@mkboth{\MakeUppercase\indexname}%
-  %  {\MakeUppercase\indexname}%
-  %  \parindent \z@
-  %  \parskip\z@ \@plus .3\p@\relax
-  %  \columnseprule \z@
-  %  \columnsep 35\p@
-  \chapter{\indexname}
-  \begin{multicols}{2}
-    \let\item\@idxitem
-}{\end{multicols}\cleardoublepage}
+\renewenvironment{theindex}
+{
+  \if@twocolumn
+    \@restonecolfalse
+  \else
+    \@restonecoltrue
+  \fi
+  \twocolumn[
+    \phantomsection
+    \vspace*{43pt}
+    \@makeschapterhead{\indexname}
+    \addcontentsline{toc}{chapter}{\indexname}
+  ]%
+  \@mkboth{\MakeUppercase\indexname}{\MakeUppercase\indexname}%
+  \parindent\z@
+  \parskip\z@ \@plus .3\p@\relax
+  \columnseprule \z@
+  \columnsep 35\p@
+  \let\item\@idxitem
+}{\if@restonecol\onecolumn\else\clearpage\fi}
 \endinput

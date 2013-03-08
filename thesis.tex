@@ -1,7 +1,13 @@
 % Complicated example
-\documentclass{ucdthesis}
+\documentclass[
+% Extra options
+% twoside,   % Two sided version for a personal copy
+% editor,    % Editor mode provides reference hints and grid in document
+% copyright, % Include a copyright page
+]{ucdthesis}
 % Packages used
 \usepackage{xcolor} % include color
+\usepackage{hyperref}
 \usepackage[all]{hypcap} % Fixes hyperref links at end of captions
 \usepackage{graphics} % Generic graphics package
 \usepackage{pgfplots} % Supprt plotting (also includes tikz)
@@ -11,8 +17,8 @@
 \usepackage{braket} % Bra-ket commands used in physics
 \usepackage{cancel} % Cancel command used in math
 \usepackage{dcolumn} % decimal point alignment in tables
-\usepackage{natbib}
-\usepackage{ifthen} % Used to create standalone abstract
+\usepackage[sort&compress]{natbib}
+\usepackage{natmove}
 \usepackage{lipsum} % Package to produce lipsum text. You may safely delete this line once you remove the \lipsum commands
 % you can run the command
 % $ find . -exec grep -H lipsum '{}' \;
@@ -37,17 +43,7 @@
 %   $ latexmk -pdf thesis.tex
 % then, 
 %   $ latexmk -pdf -jobname=abstract-standalone thesis.tex
-\ifthenelse{\equal{\detokenize{abstract-standalone}}{\jobname}}{
-  \begin{document}
-  \thispagestyle{empty} % Remove page numbering on first page
-  \rhead{\thepage} % place page numbers in right header
-  \cfoot{} % remove page numbers from center footer
-  \include{abstract}
-  \end{document}
-}{
-\pgfrealjobname{thesis} % Used for externalizing pgf figures
 % This sets up hyperref and uses some of the values we already defined
-\makeatletter % Process @ as letter. Required to access @title, @author and @field values
 \hypersetup{
   bookmarks, % Set acrobat bookmarks
   bookmarksnumbered, % Include bookmark section numbers
@@ -57,14 +53,11 @@
   naturalnames, % Use TeX names in links
   breaklinks, % Fixes long caption titles on list of tables
   backref,% Bibliographical back references
-  pdftitle={\@title}, % Text for PDF title field
-  pdfauthor={\@author}, % Text for PDF author field
-  pdfsubject={\@field}, % Text for PDF subject field
   pdfkeywords={thesis, example}, % Comma separated list of keywords (space after comma is recommended)
 }
-\makeatother % Process @ as other
 % Main Document
 \makeindex
+\bibliographystyle{apsrev4-1}
 \begin{document}
 \begin{frontmatter}
   \maketitle
@@ -79,15 +72,12 @@
   %% Include extra chapters here.
   \include{body}
   \include{conclusion}
-  \appendix
+  \appendix % Appendix goes in mainmatter!
   \include{appendix1}
   \include{appendix2}
 \end{mainmatter}
 \begin{backmatter}
-  % Index (optional)
-  \printindex
-  \bibliographystyle{ucdthesis}
   \bibliography{all}
+  \printindex
 \end{backmatter}
 \end{document}
-}
