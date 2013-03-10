@@ -1,30 +1,36 @@
 UC Davis Thesis
-UC Davis thesis tempelate based on the ucthesis class: http://www.ctan.org/tex-archive/macros/latex/contrib/ucthesis/
+UC Davis thesis tempelate based on the ucthesis class:
+  http://www.ctan.org/tex-archive/macros/latex/contrib/ucthesis/
 
 Files: 
 README        - this file
 ucdthesis.cls - the main class file
 ucdthesis.bst - natbib compatible bibliography style
-thesis.tex    - example thesis
-all.bib       - example bibliography
-*.tex         - included in thesis.tex
+editor.sty    - adds editing marks to output
+samples/thesis.tex    - example thesis
+samples/all.bib       - example bibliography
+samples/*.tex         - included in thesis.tex
 
 Usage:
-I would recommend using ``latexmk'' to typeset the thesis. You can obtain it here:
+I would recommend using ``latexmk'' to typeset the thesis. You can obtain it
+here:
 
 http://ctan.tug.org/tex-archive/support/latexmk/
 
-You can typeset the example thesis by issuing:
+In the samples directory, can typeset the example thesis-simple by issuing:
 
+$ cp ../ucdthesis.cls .
 $ latexmk -pdf thesis-simple.tex
 
 Otherwise, you can use
 
+$ cp ../ucdthesis.cls .
 $ pdflatex thesis-simple
 
-An example is included that uses a lot of optional packages. It can be typeset by issuing
+An example is included that uses a lot of optional packages. It can be typeset
+by issuing
 
+$ cp ../ucdthesis.cls .
+$ cp ../ucdthesis.bst .
+$ cp ../editor.sty .
 $ latexmk -pdf thesis.tex
-$ latexmk -pdf -jobname=abstract-standalone thesis.tex
-
-This creates thesis.pdf and abstract-standalone.pdf.
