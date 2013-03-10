@@ -1,14 +1,9 @@
 \NeedsTeXFormat{LaTeX2e}
 \ProvidesClass{ucdthesis}[2010/05/25 University of California Davis Thesis Class]
-\newif\if@copyright
-\@copyrightfalse
-\newif\if@thesis
-\@thesisfalse
-\newif\if@editor
-\@editorfalse
-\newif\if@twoside
-\@twosidefalse
-\newif\if@mainmatter
+\newif\if@ucd@copyright
+\@ucd@copyrightfalse
+\newif\if@ucd@thesis
+\@ucd@thesisfalse
 \providecommand\phantomsection{}
 %    ****************************************
 %    *               OPTIONS                *
@@ -16,87 +11,39 @@
 \DeclareOption{10pt}{\PassOptionsToClass{10pt}{book}}
 \DeclareOption{11pt}{\PassOptionsToClass{11pt}{book}}
 \DeclareOption{12pt}{\PassOptionsToClass{12pt}{book}}
-\DeclareOption{editor}{\@editortrue}
+\DeclareOption{oneside}{\PassOptionsToClass{oneside}{book}}
+\DeclareOption{twoside}{\PassOptionsToClass{twoside}{book}}
 \DeclareOption{final}{\PassOptionsToClass{final}{book}}
-\DeclareOption{oneside}{
-  \@twosidefalse
-  \PassOptionsToClass{oneside}{book}
-}
-\DeclareOption{twoside}{
-  \@twosidetrue
-  \PassOptionsToClass{twoside}{book}
-}
-\DeclareOption{copyright}{\@copyrighttrue}
-\DeclareOption{thesis}{\@thesistrue}
-\DeclareOption{dissertation}{\@thesisfalse}
+\DeclareOption{draft}{\PassOptionsToClass{draft}{book}}
+\DeclareOption{copyright}{\@ucd@copyrighttrue}
+\DeclareOption{thesis}{\@ucd@thesistrue}
+\DeclareOption{dissertation}{\@ucd@thesisfalse}
 \ProcessOptions\relax
-\LoadClass[12pt,letterpaper,oneside]{book}
+\LoadClass[12pt,letterpaper,oneside,final]{book}
 %    ****************************************
 %    *              PACKAGES                *
 %    ****************************************
 \RequirePackage{setspace}
-\if@editor%
-  % Avoid editormode in externalized figures
-  \ifx\tikzexternalrealjob\undefined%
-    \RequirePackage{xcolor}%
-    \RequirePackage{showkeys}%
-    \def\SK@refcolor{\color{lightgray}}%
-    \def\SK@labelcolor{\color{lightgray}}%
-    \RequirePackage[texcoord,grid,gridunit=in,gridcolor=lightgray,%
-      subgridcolor=lightgray!25%,
-      %noframe,
-    ]{showframe}%
-    \if@twoside%
-      \RequirePackage[mathlines,switch]{lineno}%
-    \else%
-      \RequirePackage[mathlines]{lineno}%
-    \fi%
-    \def\linenumberfont{\normalfont\tiny\ttfamily}%
-    \linenumbers%
-    \AtBeginDocument{
-      \newcommand*\patchAmsMathEnvironmentForLineno[1]{%
-        \expandafter\let\csname old#1\expandafter\endcsname\csname #1\endcsname
-        \expandafter\let\csname oldend#1\expandafter\endcsname\csname end#1\endcsname
-        \renewenvironment{#1}%
-           {\linenomath\csname old#1\endcsname}%
-           {\csname oldend#1\endcsname\endlinenomath}}%
-      \newcommand*\patchBothAmsMathEnvironmentsForLineno[1]{%
-        \patchAmsMathEnvironmentForLineno{#1}%
-        \patchAmsMathEnvironmentForLineno{#1*}}%
-      
-      \ifx\nolimits@\undefined%
-      \else%
-       \patchBothAmsMathEnvironmentsForLineno{equation}%
-       \patchBothAmsMathEnvironmentsForLineno{align}%
-       \patchBothAmsMathEnvironmentsForLineno{flalign}%
-       \patchBothAmsMathEnvironmentsForLineno{alignat}%
-       \patchBothAmsMathEnvironmentsForLineno{gather}%
-       \patchBothAmsMathEnvironmentsForLineno{multline}%
-      \fi
-      %\RequirePackage{showidx}%
-    }
-  \fi%
-\fi
 %    ****************************************
 %    *         LANGUAGE DECLARATIONS        *
 %    ****************************************
-\def\contentsname{Contents}
-\def\listfigurename{List of Figures}
-\def\listtablename{List of Tables}
-\def\bibname{References}
-\def\indexname{Index}
-\def\figurename{Figure}
-\def\tablename{Table}
-\def\chaptername{Chapter}
-\def\appendixname{Appendix}
-\def\partname{Part}
-\def\abstractname{Abstract}
-\def\vitaename{Curriculum Vit\ae}
+\renewcommand\contentsname{Contents}
+\renewcommand\listfigurename{List of Figures}
+\renewcommand\listtablename{List of Tables}
+\renewcommand\bibname{References}
+\renewcommand\indexname{Index}
+\renewcommand\figurename{Figure}
+\renewcommand\tablename{Table}
+\renewcommand\chaptername{Chapter}
+\renewcommand\appendixname{Appendix}
+\renewcommand\partname{Part}
+\newcommand\abstractname{Abstract}
+\newcommand\vitaename{Curriculum Vit\ae}
 %    ****************************************
 %    *            CAMPUS SPECIFIC           *
 %    ****************************************
-\def\graddept{Office of Graduate Studies}
-\def\campussystem{University of California}
+\newcommand\graddept{Office of Graduate Studies}
+\newcommand\campussystem{University of California}
 %    ****************************************
 %    *              PAGE STYLE              *
 %    ****************************************
@@ -162,7 +109,7 @@
 % The full (unabbreviated) name of the degree
 \def\degreename#1{\gdef\@degreename{\MakeUppercase{#1}}}
 % Previous degrees (type, university, campus, year)
-\def\@previousdegrees{}
+\newcommand\@previousdegrees{}
 \newcommand*{\previousdegree}[4]{%
   \protected@edef\@previousdegrees{%
     \@previousdegrees%
@@ -177,7 +124,7 @@
 % The name of your committees chair
 \def\chair#1{\gdef\@chair{#1}}
 % The names of your other committe members, one per line
-\def\@othermembers{}
+\newcommand\@othermembers{}
 \newcommand*{\othermember}[1]{%
   \protected@edef\@othermembers{%
     \@othermembers%
@@ -192,7 +139,7 @@
 %    ****************************************
 %    *               TWOSIDE                *
 %    ****************************************
-\def\cleardoublepage{
+\renewcommand\cleardoublepage{
   \clearpage
   \if@twoside
     \ifodd
@@ -212,7 +159,7 @@
 %    ****************************************
 %    *              TITLE PAGE              *
 %    ****************************************
-\def\maketitle{%
+\renewcommand\maketitle{%
   \ifx\hyper@@anchor\undefined%
   \else%
     \hypersetup{
@@ -229,7 +176,7 @@
       \par{\MakeUppercase{\@author}}
       \par{}\@previousdegrees
     \end{singlespace}
-    \if@thesis
+    \if@ucd@thesis
       \par{THESIS}
     \else
       \par{DISSERTATION}
@@ -250,7 +197,7 @@
     \par{Committee in Charge}
     \par{\@degreeyear}
   \end{center}
-  \if@copyright
+  \if@ucd@copyright
     \clearpage
     \thispagestyle{empty}
     \vspace*{\fill}
@@ -277,7 +224,7 @@
 %    ****************************************
 %    *           CONTENTS PAGE              *
 %    ****************************************
-\def\tableofcontents{%
+\renewcommand\tableofcontents{%
   \chapter*{\contentsname}%
   \@starttoc{toc}%
 }
@@ -315,7 +262,7 @@
 %    ****************************************
 %    *            ABSTRACT PAGE             *
 %    ****************************************
-\def\abstract{
+\newcommand\abstract{
   \cleardoublepage
   \phantomsection
   \addcontentsline{toc}{chapter}{\abstractname}

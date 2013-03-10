@@ -1,0 +1,88 @@
+%% Editor package
+%% Include and turn on useful editing options
+\newif\if@editor@lineno
+\@editor@linenotrue
+\newif\if@editor@grid
+\@editor@gridtrue
+\newif\if@editor@frame
+\@editor@frametrue
+\newif\if@editor@showkeys
+\@editor@showkeystrue
+\newif\if@editor@overfull
+\@editor@overfulltrue
+\DeclareOption{nolineno}{\@editor@linenofalse}
+\DeclareOption{nogrid}{\@editor@gridfalse}
+\DeclareOption{noframe}{\@editor@framefalse}
+\DeclareOption{noshowkeys}{\@editor@showkeysfalse}
+\DeclareOption{nooverfull}{\@editor@overfullfalse}
+\ProcessOptions\relax
+%% Ignore editor options for externalized graphics
+\ifx\tikzexternalrealjob\undefined
+\else
+  \@editor@linenofalse
+  \@editor@gridfalse
+  \@editor@framefalse
+  \@editor@showkeysfalse
+\fi
+%% Overfull mark
+\if@editor@overfull
+  \AtBeginDocument{\overfullrule=1mm}
+\fi
+%% Line numbers
+\if@editor@lineno%
+  \if@twoside%
+    \RequirePackage[mathlines,switch]{lineno}%
+  \else%
+    \RequirePackage[mathlines]{lineno}%
+  \fi%
+  \renewcommand\linenumberfont{\normalfont\tiny\ttfamily}%
+  \linenumbers%
+  %% Fix amsmath environments
+  \AtBeginDocument{
+    \newcommand*\patchAmsMathEnvironmentForLineno[1]{%
+      \expandafter\let\csname old#1\expandafter\endcsname\csname #1\endcsname
+      \expandafter\let\csname oldend#1\expandafter\endcsname\csname end#1\endcsname
+      \renewenvironment{#1}%
+         {\linenomath\csname old#1\endcsname}%
+         {\csname oldend#1\endcsname\endlinenomath}}%
+    \newcommand*\patchBothAmsMathEnvironmentsForLineno[1]{%
+      \patchAmsMathEnvironmentForLineno{#1}%
+      \patchAmsMathEnvironmentForLineno{#1*}}%
+
+    \ifx\nolimits@\undefined%
+    \else%
+      \patchBothAmsMathEnvironmentsForLineno{equation}%
+      \patchBothAmsMathEnvironmentsForLineno{align}%
+      \patchBothAmsMathEnvironmentsForLineno{flalign}%
+      \patchBothAmsMathEnvironmentsForLineno{alignat}%
+      \patchBothAmsMathEnvironmentsForLineno{gather}%
+      \patchBothAmsMathEnvironmentsForLineno{multline}%
+    \fi
+  }
+\fi
+%% Grid and frame
+\if@editor@grid
+  \RequirePackage[texcoord,gridunit=in,colorgrid]{eso-pic}%
+  \def\ESO@gridcolor{lightgray}%
+  \def\ESO@subgridcolor{lightgray!50}%
+  \if@editor@frame
+    \AddToShipoutPictureFG{
+      \AtTextLowerLeft{%
+        \framebox(\LenToUnit{\textwidth},\LenToUnit{\textheight}){}%
+      }%
+    }
+  \fi
+\else
+  \if@editor@frame
+    \RequirePackage{eso-pic}
+    \AddToShipoutPictureFG{
+      \AtTextLowerLeft{%
+        \framebox(\LenToUnit{\textwidth},\LenToUnit{\textheight}){}%
+      }%
+    }
+  \fi
+\fi
+%% Showkeys
+\if@editor@showkeys
+  \RequirePackage[color]{showkeys}%
+\fi
