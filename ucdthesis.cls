@@ -27,18 +27,18 @@
 %    ****************************************
 %    *         LANGUAGE DECLARATIONS        *
 %    ****************************************
-\renewcommand\contentsname{Contents}
-\renewcommand\listfigurename{List of Figures}
-\renewcommand\listtablename{List of Tables}
-\renewcommand\bibname{References}
-\renewcommand\indexname{Index}
-\renewcommand\figurename{Figure}
-\renewcommand\tablename{Table}
-\renewcommand\chaptername{Chapter}
-\renewcommand\appendixname{Appendix}
-\renewcommand\partname{Part}
-\newcommand\abstractname{Abstract}
-\newcommand\vitaename{Curriculum Vit\ae}
+\def\contentsname{Contents}
+\def\listfigurename{List of Figures}
+\def\listtablename{List of Tables}
+\def\bibname{Bibliography}
+\def\indexname{Index}
+\def\figurename{Figure}
+\def\tablename{Table}
+\def\chaptername{Chapter}
+\def\appendixname{Appendix}
+\def\partname{Part}
+\def\abstractname{Abstract}
+\def\vitaename{Curriculum Vit\ae}
 %    ****************************************
 %    *            CAMPUS SPECIFIC           *
 %    ****************************************
@@ -64,37 +64,14 @@
 %    ****************************************
 %    *              NUMBERING               *
 %    ****************************************
-\def\ps@frontmatter{%
-  \def\@oddfoot{\hfil-\thepage-\hfil}
-  \let\@evenfoot\@oddfoot
-  \let\@oddhead\@empty
-  \let\@evenhead\@empty
-  \let\@mkboth\markboth
-  \def\chaptermark##1{%
-    \markright {\MakeUppercase{%
-      \ifnum \c@secnumdepth >\m@ne
-        \if@mainmatter
-          \@chapapp\ \thechapter. \ %
-        \fi
-      \fi
-      ##1}}}}
-\def\ps@mainmatter{%
-  \def\@oddfoot{\hfil\thepage\hfil}
-  \let\@evenfoot\@oddfoot
-  \let\@oddhead\@empty
-  \let\@evenhead\@empty
-  \let\@mkboth\markboth
-  \def\chaptermark##1{%
-    \markright {\MakeUppercase{%
-      \ifnum \c@secnumdepth >\m@ne
-        \if@mainmatter
-          \@chapapp\ \thechapter. \ %
-        \fi
-      \fi
-      ##1}}}}
-\let\ps@backmatter\ps@mainmatter
-%\let\ps@plain\ps@frontmatter
-\pagestyle{frontmatter}
+%\newcommand\ps@frontmatter{%
+%  \def\@oddfoot{\hfil\textrm{-\thepage -}\hfil}
+%  \let\@evenfoot\@oddfoot
+%  \let\@oddhead\@empty
+%  \let\@evenhead\@empty
+%}
+%\let\ps@mainmatter\ps@plain
+%\let\ps@backmatter\ps@plain
 %    ****************************************
 %    *           USER DECLARATIONS          *
 %    ****************************************
@@ -279,27 +256,25 @@
 %    ****************************************
 %    *              BACK MATTER             *
 %    ****************************************
-\renewcommand\frontmatter{%
-  \cleardoublepage
-  \@mainmatterfalse
-  \pagenumbering{roman}
-  \pagestyle{frontmatter}
-}
-\renewcommand\mainmatter{%
-  \cleardoublepage
-  \@mainmattertrue
-  \pagenumbering{arabic}
+\renewenvironment{frontmatter}{%
   \setcounter{page}{1}
-  \pagestyle{mainmatter}
-}
-\renewcommand\backmatter{%
-  \if@openright
-    \cleardoublepage
-  \else
-    \clearpage
-  \fi
+  \renewcommand{\thepage}{-\roman{page}-}
   \@mainmatterfalse
-  \pagestyle{backmatter}
+}{
+  \cleardoublepage
+  \cleardoublepage
+  \renewcommand{\thepage}{arabic{page}}
+  \setcounter{page}{1}
+}
+\def\mainmatter{%
+  \cleardoublepage
+  \pagestyle{plain}
+  \@mainmattertrue
+}
+\def\backmatter{%
+  \cleardoublepage
+  \pagestyle{plain}
+  \@mainmatterfalse
 }
 %    ****************************************
 %    *                CHAPTER               *
@@ -335,13 +310,13 @@
 %    ****************************************
 %    *           THE BIBLIOGRAPHY           *
 %    ****************************************
-  %\@ifpackageloaded{natbib}{}{% natbib not loaded
+\@ifpackageloaded{chapterbib}{}{% chapterbib not loaded
   \AtBeginDocument{
     \renewenvironment{thebibliography}[1]{%
       \chapter{\bibname}
       \begin{thebibitemlist}{#1}}{\end{thebibitemlist}}
-      }
-      %}
+  }
+}
  \newenvironment{thebibitemlist}[1]{
     \list{\@biblabel{\@arabic\c@enumiv}}%
          {\settowidth\labelwidth{\@biblabel{#1}}%
@@ -382,4 +357,5 @@
   \columnsep 35\p@
   \let\item\@idxitem
 }{\if@restonecol\onecolumn\else\clearpage\fi}
+\ps@plain
 \endinput
